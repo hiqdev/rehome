@@ -1,0 +1,15 @@
+package:
+    type:           project
+    name:           rehome
+    title:          Script to deploy home easily
+    headline:       ReHome
+    keywords:       rehome
+    description:    |
+        - keep all your home in repository
+        - define shell and dependencies in `.rehome.json`
+        - wget https://raw.githubusercontent.com/hiqdev/rehome/master/rehome ; python rehome init git://my.repo/me/home
+        - Congrats! You're done with moving your home to new server.
+
+plugins:
+    hiqdev/hidev-python: "*@dev"
+    hiqdev/hidev-hiqdev: "*"
