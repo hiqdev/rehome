@@ -2,6 +2,7 @@
 
 import os
 import sys
+import json
 import copy
 from pprint import pprint
 
@@ -13,37 +14,120 @@ def main():
         quit()
 
     args = copy.deepcopy(sys.argv)
-    prog = args.pop(0)
-    repo = args.pop(0)
+    program = args.pop(0)
+    command = args.pop(0)
 
-    if repo in globals():
-        globals()[repo](*args)
+    if command in globals():
+        globals()[command](*args)
     else:
-        create_from(repo)
+        print colored('unknown command: ' + command, 'red')
+        help()
 
 def help(command = None):
     if command:
         print 'rehome {}'.format(command)
         print '   more description later'
     else:
-        print('usage: rehome <command>|<repo> [<args>]')
+        print('usage: rehome <command> [<args>]')
+        print('   init      Init home from given repo')
         print('   update    Update everything')
         print('   clone     Clone with features')
 
-def create_from(repo):
-    if os.path.exists('.git'):
+def init(repo):
+    init_home(repo)
+    load_config()
+    set_shell()
+    get_dependencies()
+    warning('. inited home', 'success')
+
+def get_dependencies():
+    if 'dependencies' not in config:
         return
-    clone(repo, MAIN_REPO_TMP_DIR)
+    for repo, dir in config['dependencies'].iteritems():
+        if not os.path.exists(dir):
+            clone(repo, dir)
+
+def load_config(path = '.rehome.json'):
+    global config
+    if not os.path.exists(path):
+        die('X no config found')
+    with open(path) as file:
+        config = json.load(file)
+
+def init_home(repo):
+    if os.path.exists('.git'):
+        notice('+ .git already exists')
+        return
+    if clone(repo, MAIN_REPO_TMP_DIR):
+        die('X failed clone main repo')
     rsync(MAIN_REPO_TMP_DIR, '.')
+    if system('rm -rf ' + MAIN_REPO_TMP_DIR):
+        return
+
+def set_shell():
+    if 'shell' not in config:
+        return
+    shell = config['shell']
+    path = find_shell(shell)
+    if not path:
+        warning('! wrong shell: ' + shell)
+        return
+    if os.environ.get('SHELL', '') != path:
+        system('chsh -s ' + path)
+
+def find_shell(shell):
+    if os.path.exists(shell):
+        return shell
+    return os.popen('which ' + shell).read().strip()
 
 def rsync(src, dst):
-    os.system('rsync -a {}/ {}/'.format(src, dst))
+    system('rsync -a {}/ {}/'.format(src, dst))
 
 def clone(repo, path = ''):
     if '://' not in repo:
-        repo = 'git@github.com:' + repo
+        #repo = 'git@github.com:' + repo
+        repo = 'https://github.com/' + repo
     if os.path.exists(path):
         return
-    os.system('git clone {} {}'.format(repo, path))
+    return system('git clone {} {}'.format(repo, path))
+
+def system(command):
+    notice('> ' + command.rstrip())
+    result = os.system(command)
+    if result:
+        warning('! failed: {}'.format(result))
+    return result
+
+def die(text, color = 'error'):
+    print colored(text, color)
+    quit()
+
+def warning(text, color = 'warning'):
+    print colored(text, color)
+
+def notice(text, color = 'notice'):
+    print colored(text, color)
+
+def colored(text, color):
+    types = {
+        'notice':   'normal',
+        'success':  'green',
+        'warning':  'yellow',
+        'error':    'red',
+    }
+    colors = {
+        'normal':   '',
+        'white':    '\033[97m',
+        'cyan':     '\033[96m',
+        'magenta':  '\033[95m',
+        'blue':     '\033[94m',
+        'yellow':   '\033[93m',
+        'green':    '\033[92m',
+        'red':      '\033[91m',
+        'end':      '\033[0m',
+    }
+    if color in types:
+        color = types[color]
+    return colors[color] + text + colors['end']
 
 main()
