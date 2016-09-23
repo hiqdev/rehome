@@ -1,0 +1,49 @@
+#!/usr/bin/env python
+
+import os
+import sys
+import copy
+from pprint import pprint
+
+MAIN_REPO_TMP_DIR = 'MAIN_REPO_TMP'
+
+def main():
+    if len(sys.argv)<2:
+        help()
+        quit()
+
+    args = copy.deepcopy(sys.argv)
+    prog = args.pop(0)
+    repo = args.pop(0)
+
+    if repo in globals():
+        globals()[repo](*args)
+    else:
+        create_from(repo)
+
+def help(command = None):
+    if command:
+        print 'rehome {}'.format(command)
+        print '   more description later'
+    else:
+        print('usage: rehome <command>|<repo> [<args>]')
+        print('   update    Update everything')
+        print('   clone     Clone with features')
+
+def create_from(repo):
+    if os.path.exists('.git'):
+        return
+    clone(repo, MAIN_REPO_TMP_DIR)
+    rsync(MAIN_REPO_TMP_DIR, '.')
+
+def rsync(src, dst):
+    os.system('rsync -a {}/ {}/'.format(src, dst))
+
+def clone(repo, path = ''):
+    if '://' not in repo:
+        repo = 'git@github.com:' + repo
+    if os.path.exists(path):
+        return
+    os.system('git clone {} {}'.format(repo, path))
+
+main()
