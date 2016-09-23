@@ -35,10 +35,13 @@ def help(command = None):
 
 def init(repo):
     init_home(repo)
+    touch()
+    warning('. inited home', 'success')
+
+def touch():
     load_config()
     set_shell()
     get_dependencies()
-    warning('. inited home', 'success')
 
 def get_dependencies():
     if 'dependencies' not in config:
@@ -84,7 +87,7 @@ def rsync(src, dst):
     system('rsync -a {}/ {}/'.format(src, dst))
 
 def clone(repo, path = ''):
-    if '://' not in repo:
+    if '://' not in repo and '@' not in repo:
         #repo = 'git@github.com:' + repo
         repo = 'https://github.com/' + repo
     if os.path.exists(path):
