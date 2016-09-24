@@ -1,11 +1,6 @@
 language: python
-python:
-    - 2.7
-    - 3.4
-matrix:
-    allow_failures:
-        -
-            python: 3.4
+php:
+    - 7.0
 sudo: false
 before_install:
     - 'wget http://hiqdev.com/hidev/hidev.phar -O hidev.phar && chmod a+x hidev.phar'
