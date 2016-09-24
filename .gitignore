@@ -19,4 +19,5 @@ nbproject
 __pycache__/
 
 # PHARs
+chkipper.phar
 composer.phar
