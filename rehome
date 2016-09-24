@@ -7,6 +7,7 @@ import copy
 from pprint import pprint
 
 MAIN_REPO_TMP_DIR = 'MAIN_REPO_TMP'
+installed = {}
 
 def main():
     if len(sys.argv)<2:
@@ -15,7 +16,7 @@ def main():
 
     args = copy.deepcopy(sys.argv)
     program = args.pop(0)
-    command = args.pop(0)
+    command = args.pop(0).replace('-', '_')
 
     if command in globals():
         globals()[command](*args)
@@ -29,26 +30,102 @@ def help(command = None):
         print '   more description later'
     else:
         print('usage: rehome <command> [<args>]')
-        print('   init      Init home from given repo')
-        print('   update    Update everything')
-        print('   clone     Clone with features')
+        print('   init      <repo>      init-home install')
+        print('   reinit    [<repo>]    init-home update')
+        print('   install               set-shell check install-repos run-installs')
+        print('   update                set-shell check update-repos run-installs run-updates')
+        print('   set-shell [<shell>]   Sets given or configured shell with `chsh`')
+        print('   check                 Runs configured checks')
 
 def init(repo):
     init_home(repo)
-    touch()
-    warning('. inited home', 'success')
+    install()
+    notice('. inited home', 'success')
 
-def touch():
-    load_config()
+def reinit(repo = None):
+    init_home(repo)
+    update(repo)
+    notice('. reinited home', 'success')
+
+def install():
     set_shell()
-    get_dependencies()
+    check()
+    install_repos()
+    run_installs()
 
-def get_dependencies():
-    if 'dependencies' not in config:
+def update(repo = None):
+    pull('.', repo)
+    set_shell()
+    check()
+    update_repos()
+    run_installs()
+    run_updates()
+
+def check():
+    config = get_config()
+    if 'checks' not in config:
         return
-    for repo, dir in config['dependencies'].iteritems():
+    for command, comment in config['checks'].iteritems():
+        ok = backtick(command)
+        if not ok:
+            warning('! failed "{}" try: {}'.format(command, comment))
+
+def run_installs():
+    config = get_config()
+    if 'installs' not in config:
+        return
+    if 'updates' not in config:
+        installs = config['installs']
+    else:
+        installs = config['updates'].copy()
+        installs.update(config['installs'])
+    for path, commands in installs.iteritems():
+        if not os.path.exists(path):
+            mark_installed(path)
+            if run_commands(commands):
+                warning('x failed install ' + path, 'error')
+
+def mark_installed(path):
+    global installed
+    installed[path] = 1
+
+def is_installed(path):
+    global installed
+    return path in installed
+
+def run_updates():
+    config = get_config()
+    if 'updates' not in config:
+        return
+    for path, commands in config['updates'].iteritems():
+        if not is_installed(path):
+            if run_commands(commands):
+                warning('x failed update ' + path, 'error')
+
+def run_commands(commands):
+    for command in commands:
+        if system(command):
+            return True
+
+def install_repos():
+    config = get_config()
+    if 'repos' not in config:
+        return
+    for dir, repo in config['repos'].iteritems():
         if not os.path.exists(dir):
             clone(repo, dir)
+
+def update_repos():
+    config = get_config()
+    if 'repos' not in config:
+        return
+    for dir, repo in config['repos'].iteritems():
+        pull(dir, repo)
+
+def get_config():
+    if 'config' not in globals():
+        load_config()
+    return config
 
 def load_config(path = '.rehome.json'):
     global config
@@ -67,32 +144,47 @@ def init_home(repo):
     if system('rm -rf ' + MAIN_REPO_TMP_DIR):
         return
 
-def set_shell():
-    if 'shell' not in config:
-        return
-    shell = config['shell']
+def set_shell(shell = None):
+    if not shell:
+        config = get_config()
+        if 'shell' not in config:
+            return
+        shell = config['shell']
     path = find_shell(shell)
     if not path:
         warning('! wrong shell: ' + shell)
         return
-    if os.environ.get('SHELL', '') != path:
+    if os.path.basename(os.environ.get('SHELL', '')) != shell:
         system('chsh -s ' + path)
 
 def find_shell(shell):
     if os.path.exists(shell):
         return shell
-    return os.popen('which ' + shell).read().strip()
+    return which(shell)
 
 def rsync(src, dst):
     system('rsync -a {}/ {}/'.format(src, dst))
 
+def pull(path, repo = None):
+    if os.path.exists(path):
+        return system('git -C {} pull --rebase'.format(path))
+    else:
+        return clone(repo, path)
+
 def clone(repo, path = ''):
-    if '://' not in repo and '@' not in repo:
-        #repo = 'git@github.com:' + repo
-        repo = 'https://github.com/' + repo
+    if not repo:
+        warning('x no repo given for "{}"'.format(path), 'error')
+        return
+    repo = normalize_repo(repo)
     if os.path.exists(path):
         return
     return system('git clone {} {}'.format(repo, path))
+
+def normalize_repo(repo):
+    if '://' not in repo and '@' not in repo:
+        #repo = 'git@github.com:' + repo
+        repo = 'https://github.com/' + repo
+    return repo
 
 def system(command):
     notice('> ' + command.rstrip())
@@ -111,9 +203,15 @@ def warning(text, color = 'warning'):
 def notice(text, color = 'notice'):
     print colored(text, color)
 
+def which(binary):
+     return backtick('which ' + binary)
+
+def backtick(command):
+     return os.popen(command).read().strip()
+
 def colored(text, color):
     types = {
-        'notice':   'normal',
+        'notice':   'white',
         'success':  'green',
         'warning':  'yellow',
         'error':    'red',
