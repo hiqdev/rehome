@@ -16,7 +16,7 @@ ReHome
 
 The main config file is `.rehome.json`
 
-Here is my config:
+Here is example config:
 
 ```json
 {
@@ -53,8 +53,8 @@ Looks quite clear:
 - `shell` - given shell will be set with `chsh`
 - `checks` - runs given commands and notifies on fails with given comments
 - `repos` - given repos will be installed/updated to given paths
-- `installs` - given scripts will be run to install paths if they don't exist on install/update
-- `updates` - given scripts will be run to update paths on install/update
+- `installs` - given scripts will be run to install paths if they don't exist
+- `updates` - given scripts will be run to update paths
 
 ## License
 
