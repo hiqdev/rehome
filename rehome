@@ -181,6 +181,8 @@ def clone(repo, path = ''):
     return system('git clone {} {}'.format(repo, path))
 
 def normalize_repo(repo):
+    if repo[0] == '/' or repo[0] == '.':
+        return repo
     if '://' not in repo and '@' not in repo:
         #repo = 'git@github.com:' + repo
         repo = 'https://github.com/' + repo
@@ -231,4 +233,5 @@ def colored(text, color):
         color = types[color]
     return colors[color] + text + colors['end']
 
-main()
+if __name__ == '__main__':
+    main()
