@@ -1,0 +1,8 @@
+{
+    "require": {
+        "hiqdev/hidev-python": "*@dev",
+        "hiqdev/hidev-pytest": "*@dev",
+        "hiqdev/hidev-hiqdev": "*"
+    },
+    "minimum-stability": "dev"
+}
