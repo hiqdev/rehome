@@ -12,4 +12,5 @@ package:
 
 plugins:
     hiqdev/hidev-python: "*@dev"
+    hiqdev/hidev-pytest: "*@dev"
     hiqdev/hidev-hiqdev: "*"
