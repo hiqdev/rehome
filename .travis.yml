@@ -11,7 +11,7 @@ before_install:
     - 'sudo add-apt-repository --yes ppa:ondrej/php'
     - 'sudo apt-get update'
 #   - 'sudo apt-get upgrade --show-upgraded'
-    - 'sudo apt-get install php5.6-cli'
+    - 'sudo apt-get install php5.6-cli php5.6-mbstring'
     - 'env php -v'
     - 'wget http://hiqdev.com/hidev/hidev.phar -O hidev.phar && chmod a+x hidev.phar'
     - './hidev.phar --version'
