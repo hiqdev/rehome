@@ -10,7 +10,7 @@ sudo: true
 before_install:
     - 'sudo add-apt-repository --yes ppa:ondrej/php'
     - 'sudo apt-get update'
-    - 'sudo apt-get install php5.7-cli php5.7-mbstring'
+    - 'sudo apt-get install php5.6-cli php5.6-mbstring'
     - 'env php -v'
     - 'wget http://hiqdev.com/hidev/hidev.phar -O hidev.phar && chmod a+x hidev.phar'
     - './hidev.phar --version'
