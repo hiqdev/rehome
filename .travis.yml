@@ -9,6 +9,7 @@ matrix:
 sudo: true
 before_install:
     - 'sudo apt-get install php5-cli'
+    - 'env php -v'
     - 'wget http://hiqdev.com/hidev/hidev.phar -O hidev.phar && chmod a+x hidev.phar'
     - './hidev.phar --version'
     - './hidev.phar travis/before_install'
