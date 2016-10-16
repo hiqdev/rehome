@@ -8,7 +8,7 @@ matrix:
             python: 3.4
 sudo: true
 before_install:
-    - 'sudo add-apt-repository ppa:ondrej/php'
+    - 'sudo add-apt-repository --yes ppa:ondrej/php'
     - 'sudo apt-get update'
     - 'sudo apt-get upgrade --show-upgraded'
     - 'sudo apt-get install php5.6-cli'
