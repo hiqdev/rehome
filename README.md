@@ -8,7 +8,7 @@ ReHome
 [![Scrutinizer Code Quality](https://img.shields.io/scrutinizer/g/hiqdev/rehome.svg)](https://scrutinizer-ci.com/g/hiqdev/rehome/)
 
 - keep all your home in repository
-- define shell and dependencies in `.rehome.json`
+- define config: shell and dependencies in `.rehome.json`
 - `wget https://raw.githubusercontent.com/hiqdev/rehome/master/rehome ; python rehome init git://my.repo/me/home`
 - Congrats! You're done with moving your home to new server.
 
@@ -51,7 +51,7 @@ Here is example config:
 Looks quite clear:
 
 - `shell` - given shell will be set with `chsh`
-- `checks` - runs given commands and notifies on fails with given comments
+- `checks` - checks that given commands run without error
 - `repos` - given repos will be installed/updated to given paths
 - `installs` - given scripts will be run to install paths if they don't exist
 - `updates` - given scripts will be run to update paths

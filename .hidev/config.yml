@@ -6,7 +6,7 @@ package:
     keywords:       rehome
     description:    |
         - keep all your home in repository
-        - define shell and dependencies in `.rehome.json`
+        - define config: shell and dependencies in `.rehome.json`
         - `wget https://raw.githubusercontent.com/hiqdev/rehome/master/rehome ; python rehome init git://my.repo/me/home`
         - Congrats! You're done with moving your home to new server.
 

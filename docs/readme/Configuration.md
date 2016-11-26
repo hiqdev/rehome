@@ -35,7 +35,7 @@ Here is example config:
 Looks quite clear:
 
 - `shell` - given shell will be set with `chsh`
-- `checks` - runs given commands and notifies on fails with given comments
+- `checks` - checks that given commands run without error
 - `repos` - given repos will be installed/updated to given paths
 - `installs` - given scripts will be run to install paths if they don't exist
 - `updates` - given scripts will be run to update paths
