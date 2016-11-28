@@ -21,9 +21,10 @@ nbproject
 *.py[cod]
 __pycache__/
 
-# PHARs
+# Binaries
 chkipper.phar
 composer.phar
 coverage.phar
+ocular.phar
 pip.phar
 pytest.phar
