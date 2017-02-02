@@ -34,9 +34,11 @@ Here is example config:
 
 Looks quite clear:
 
-- `shell` - given shell will be set with `chsh`
-- `checks` - checks that given commands run without error
-- `repos` - given repos will be installed/updated to given paths
-- `installs` - given scripts will be run to install paths if they don't exist
-- `updates` - given scripts will be run to update paths
+1. `dotfiles` - dotfiles repository
+2. `shadows`  - repositories with files to be simlinked into home
+3. `shell`    - shell to be set with `chsh`
+4. `repos`    - repositories to be installed/updated to given paths
+5. `commands` - commands to be run unconditionally
+6. `installs` - scripts to be run if path doesn't exist
+7. `updates`  - scripts to be run on update
 

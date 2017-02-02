@@ -1,13 +1,13 @@
 package:
     type:           project
     name:           rehome
-    title:          Script to deploy home easily
+    title:          Script to deploy and maintain home easily
     headline:       ReHome
     keywords:       rehome
     description:    |
-        - keep all your home in repository
+        - keep your dotfiles in repository
         - define config: shell and dependencies in `.rehome.json`
-        - `wget https://raw.githubusercontent.com/hiqdev/rehome/master/rehome ; python rehome init git://my.repo/me/home`
+        - `wget https://raw.githubusercontent.com/hiqdev/rehome/master/rehome ; python rehome init me/dotfiles`
         - Congrats! You're done with moving your home to new server.
 
 plugins:
