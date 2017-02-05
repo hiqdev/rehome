@@ -8,11 +8,12 @@ import copy
 MAIN_REPO_TMP_DIR = 'MAIN_REPO_TMP'
 installed = {}
 
-
 def main():
     if len(sys.argv) < 2:
         help()
         quit()
+
+    os.chdir(os.path.expanduser('~'))
 
     args = copy.deepcopy(sys.argv)
     program = args.pop(0)
@@ -114,6 +115,8 @@ def run_updates():
 
 
 def run_commands(commands):
+    if type(commands) is not list:
+        commands = [commands]
     for command in commands:
         if system(command):
             return True
@@ -206,8 +209,8 @@ def normalize_repo(repo):
     if repo[0] == '/' or repo[0] == '.':
         return repo
     if '://' not in repo and '@' not in repo:
-        #repo = 'git@github.com:' + repo
-        repo = 'https://github.com/' + repo
+        repo = 'git@github.com:' + repo
+        #repo = 'https://github.com/' + repo
     return repo
 
 
