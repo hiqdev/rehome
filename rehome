@@ -34,10 +34,9 @@ def help(command=None):
         print('usage: rehome <command> [<args>]')
         print('   init      <repo>      init-home install')
         print('   reinit    [<repo>]    init-home update')
-        print('   install               set-shell check install-repos run-installs')
-        print('   update                set-shell check update-repos run-installs run-updates')
+        print('   install               set-shell install-repos run-installs')
+        print('   update                set-shell update-repos run-installs run-updates')
         print('   set-shell [<shell>]   Sets given or configured shell with `chsh`')
-        print('   check                 Runs configured checks')
 
 
 def init(repo):
@@ -54,7 +53,6 @@ def reinit(repo=None):
 
 def install():
     set_shell()
-    check()
     install_repos()
     run_installs()
 
@@ -62,20 +60,9 @@ def install():
 def update(repo=None):
     pull('.', repo)
     set_shell()
-    check()
     update_repos()
     run_installs()
     run_updates()
-
-
-def check():
-    config = get_config()
-    if 'checks' not in config:
-        return
-    for command, comment in config['checks'].iteritems():
-        ok = backtick(command)
-        if not ok:
-            warning('! failed "{}" try: {}'.format(command, comment))
 
 
 def run_installs():
