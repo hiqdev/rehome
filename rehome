@@ -149,8 +149,14 @@ def init_home(repo):
     if vcs_clone(repo, MAIN_REPO_TMP_DIR):
         die('X failed clone main repo')
     rsync(MAIN_REPO_TMP_DIR, '.')
+    fix_home_permissions()
     if system('rm -rf ' + MAIN_REPO_TMP_DIR):
         return
+
+
+def fix_home_permissions():
+    system('chmod -R og-w ~')
+    system('chmod -R og-rwx ~/.ssh')
 
 
 def set_shell(shell=None):
