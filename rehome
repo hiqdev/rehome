@@ -4,8 +4,9 @@ import os
 import sys
 import json
 import copy
+import getpass
 
-MAIN_REPO_TMP_DIR = 'MAIN_REPO_TMP'
+ROOT_REPO_TMP_DIR = 'ROOT_REPO_TMP'
 installed = {}
 
 def main():
@@ -41,15 +42,15 @@ def help(command=None):
         print('   set-shell [<shell>]   Sets given or configured shell with `chsh`')
 
 
-def init(repo):
-    init_home(repo)
+def init(rootrepo):
+    init_home(rootrepo)
     install()
     notice('. inited home', 'success')
 
 
-def reinit(repo=None):
-    init_home(repo)
-    update(repo)
+def reinit(rootrepo=None):
+    init_home(rootrepo)
+    update(rootrepo)
     notice('. reinited home', 'success')
 
 
@@ -59,8 +60,8 @@ def install():
     run_installs()
 
 
-def update(repo=None):
-    vcs_pull('.', repo)
+def update(rootrepo=None):
+    vcs_pull('.', rootrepo)
     set_shell()
     pull()
     run_installs()
@@ -142,15 +143,15 @@ def load_config(path='.rehome.json'):
         config = json.load(file)
 
 
-def init_home(repo):
+def init_home(rootrepo):
     if os.path.exists('.git'):
         notice('+ .git already exists')
         return
-    if vcs_clone(repo, MAIN_REPO_TMP_DIR):
-        die('X failed clone main repo')
-    rsync(MAIN_REPO_TMP_DIR, '.')
+    if vcs_clone(rootrepo, ROOT_REPO_TMP_DIR):
+        die('X failed clone root repo')
+    rsync(ROOT_REPO_TMP_DIR, '.')
     fix_home_permissions()
-    if system('rm -rf ' + MAIN_REPO_TMP_DIR):
+    if system('rm -rf ' + ROOT_REPO_TMP_DIR):
         return
 
 
