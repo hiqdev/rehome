@@ -42,8 +42,9 @@ def help(command=None):
         print('   set-shell [<shell>]   Sets given or configured shell with `chsh`')
 
 
-def init(rootrepo):
+def init(rootrepo=None, dotfiles=None):
     init_home(rootrepo)
+    init_dotfiles(dotfiles)
     install()
     notice('. inited home', 'success')
 
@@ -144,9 +145,12 @@ def load_config(path='.rehome.json'):
 
 
 def init_home(rootrepo):
+    os.chdir(os.path.expanduser('~'))
     if os.path.exists('.git'):
         notice('+ .git already exists')
         return
+    if rootrepo is None:
+	die('X no root repo given')
     if vcs_clone(rootrepo, ROOT_REPO_TMP_DIR):
         die('X failed clone root repo')
     rsync(ROOT_REPO_TMP_DIR, '.')
