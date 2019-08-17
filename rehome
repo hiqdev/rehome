@@ -144,6 +144,20 @@ def load_config(path='.rehome.json'):
         config = json.load(file)
 
 
+def init_dotfiles(dotfiles=None):
+    if dotfiles is None:
+        user = getpass.getuser()
+	if (user == 'sol'):
+            user = 'hiqsol'
+        dotfiles = user + '/dotfiles'
+    dir = 'vendor/' + dotfiles
+    git = dir + '/.git'
+    if os.path.exists(git):
+        notice('+ ' + git + ' already exists')
+        return
+    vcs_clone(dotfiles, dir)
+
+
 def init_home(rootrepo):
     os.chdir(os.path.expanduser('~'))
     if os.path.exists('.git'):
