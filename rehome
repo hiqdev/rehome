@@ -136,10 +136,10 @@ def get_config():
     return config
 
 
-def load_config(path='.rehome.json'):
+def load_config(path='.config/rehome/rehome.json'):
     global config
     if not os.path.exists(path):
-        die('X no config found')
+        die('X no config found at ' + path)
     with open(path) as file:
         config = json.load(file)
 
