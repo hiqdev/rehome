@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import os
 import sys
@@ -23,14 +23,14 @@ def main():
     if command in globals():
         globals()[command](*args)
     else:
-        print colored('unknown command: ' + command, 'red')
+        print(colored('unknown command: ' + command, 'red'))
         help()
 
 
 def help(command=None):
     if command:
-        print 'rehome {}'.format(command)
-        print '   more description later'
+        print('rehome {}'.format(command))
+        print('   more description later')
     else:
         print('usage: rehome <command> [<args>]')
         print('   init      <repo>      init-home install')
@@ -237,16 +237,16 @@ def system(command):
 
 
 def die(text, color='error'):
-    print colored(text, color)
+    print(colored(text, color))
     quit()
 
 
 def warning(text, color='warning'):
-    print colored(text, color)
+    print(colored(text, color))
 
 
 def notice(text, color='notice'):
-    print colored(text, color)
+    print(colored(text, color))
 
 
 def which(binary):
