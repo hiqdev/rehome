@@ -62,7 +62,7 @@ def install():
 
 
 def update(rootrepo=None):
-    vcs_pull('.', rootrepo)
+    vcs_pull(rootrepo, '.')
     set_shell()
     pull()
     run_installs()
@@ -127,7 +127,7 @@ def pull():
     if 'repos' not in config:
         return
     for dir, repo in config['repos'].iteritems():
-        vcs_pull(dir, repo)
+        vcs_pull(repo, dir)
 
 
 def get_config():
@@ -202,7 +202,7 @@ def rsync(src, dst):
     system('rsync -a {}/ {}/'.format(src, dst))
 
 
-def vcs_pull(path, repo=None):
+def vcs_pull(repo, path):
     if os.path.exists(path):
         return system('git -C {} pull --rebase'.format(path))
     else:
