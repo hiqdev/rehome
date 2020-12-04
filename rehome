@@ -6,7 +6,7 @@ import json
 import copy
 import getpass
 
-ROOT_REPO_TMP_DIR = 'ROOT_REPO_TMP'
+REPO_TMP_DIR = 'REPO_TMP'
 installed = {}
 
 def main():
@@ -44,7 +44,7 @@ def help(command=None):
 
 def init(rootrepo=None, dotfiles=None):
     init_home(rootrepo)
-    init_dotfiles(dotfiles)
+    install_dot_config()
     install()
     notice('. inited home', 'success')
 
@@ -69,21 +69,38 @@ def update(rootrepo=None):
     run_updates()
 
 
+def install_dot_config():
+    config = get_config()
+    if '.config' not in config:
+        return
+    path = config['.config']
+    if not os.path.isdir('.config'):
+        return
+    rsync('.config', path)
+    system('rm -rf .config')
+    system('git checkout .')
+    system('git -C core checkout .')
+
+
 def run_installs():
     config = get_config()
     if 'installs' not in config:
         return
-    if 'updates' not in config:
-        installs = config['installs']
-    else:
-        installs = config['updates'].copy()
-        installs.update(config['installs'])
-    for path, commands in installs.iteritems():
-        if not os.path.exists(path):
-            mark_installed(path)
-            if run_commands(commands):
-                warning('x failed install ' + path, 'error')
+    for name in config['installs']:
+        method = config['installs'][name]
+        func = 'install_' + method
+        if func in globals():
+            globals()[func](name)
+        else:
+            system(method)
 
+def install_todo(name):
+    warning('TODO INSTALL '+name)
+
+def install_system(name):
+    if not os.system('which '+name):
+        return
+    system('sudo apt install -y '+name)
 
 def mark_installed(path):
     global installed
@@ -117,9 +134,9 @@ def clone():
     config = get_config()
     if 'repos' not in config:
         return
-    for dir, repo in config['repos'].iteritems():
+    for dir in config['repos']:
         if not os.path.exists(dir):
-            vcs_clone(repo, dir)
+            vcs_clone(config['repos'][dir], dir)
 
 
 def pull():
@@ -139,38 +156,17 @@ def get_config():
 def load_config(path='.config/rehome/rehome.json'):
     global config
     if not os.path.exists(path):
-        die('X no config found at ' + path)
+        if os.path.exists('.rehome.json'):
+            path = '.rehome.json'
+        else:
+            die('X no config found at ' + path)
     with open(path) as file:
         config = json.load(file)
 
 
-def init_dotfiles(dotfiles=None):
-    if dotfiles is None:
-        user = getpass.getuser()
-	if (user == 'sol'):
-            user = 'hiqsol'
-        dotfiles = user + '/dotfiles'
-    dir = 'vendor/' + dotfiles
-    git = dir + '/.git'
-    if os.path.exists(git):
-        notice('+ ' + git + ' already exists')
-        return
-    vcs_clone(dotfiles, dir)
-
-
 def init_home(rootrepo):
-    os.chdir(os.path.expanduser('~'))
-    if os.path.exists('.git'):
-        notice('+ .git already exists')
-        return
-    if rootrepo is None:
-	die('X no root repo given')
-    if vcs_clone(rootrepo, ROOT_REPO_TMP_DIR):
-        die('X failed clone root repo')
-    rsync(ROOT_REPO_TMP_DIR, '.')
+    vcs_install(rootrepo, os.path.expanduser('~'))
     fix_home_permissions()
-    if system('rm -rf ' + ROOT_REPO_TMP_DIR):
-        return
 
 
 def fix_home_permissions():
@@ -207,6 +203,20 @@ def vcs_pull(repo, path):
         return system('git -C {} pull --rebase'.format(path))
     else:
         return vcs_clone(repo, path)
+
+
+def vcs_install(repo, path):
+    os.chdir(path)
+    if os.path.exists('.git'):
+        notice('+ .git already exists')
+        return
+    if repo is None:
+        die('X no repo given')
+    if vcs_clone(repo, REPO_TMP_DIR):
+        die('X failed clone repo')
+    rsync(REPO_TMP_DIR, '.')
+    if system('rm -rf ' + REPO_TMP_DIR):
+        return
 
 
 def vcs_clone(repo, path=''):
