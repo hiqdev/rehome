@@ -57,6 +57,7 @@ def reinit(rootrepo=None):
 
 def install():
     set_shell()
+    set_terminal()
     clone()
     run_installs()
 
@@ -180,7 +181,7 @@ def set_shell(shell=None):
         if 'shell' not in config:
             return
         shell = config['shell']
-    path = find_shell(shell)
+    path = find_command(shell)
     if not path:
         warning('! wrong shell: ' + shell)
         return
@@ -188,7 +189,20 @@ def set_shell(shell=None):
         system('chsh -s ' + path)
 
 
-def find_shell(shell):
+def set_terminal(terminal=None):
+    if not terminal:
+        config = get_config()
+        if 'terminal' not in config:
+            return
+        terminal = config['terminal']
+    path = find_command(terminal)
+    if not path:
+        warning('! wrong terminal: ' + terminal)
+        return
+    system('sudo ln -sf ' + path + ' /etc/alternatives/x-terminal-emulator')
+
+
+def find_command(shell):
     if os.path.exists(shell):
         return shell
     return which(shell)
