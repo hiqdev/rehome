@@ -1,12 +1,7 @@
-ReHome
-======
+# ReHome
 
 **Script to deploy and maintain home easily**
 The goal is to setup all environment with a single command
-
-[![GitHub version](https://badge.fury.io/gh/hiqdev%2Frehome.svg)](https://badge.fury.io/gh/hiqdev%2Frehome)
-[![Scrutinizer Code Coverage](https://img.shields.io/scrutinizer/coverage/g/hiqdev/rehome.svg)](https://scrutinizer-ci.com/g/hiqdev/rehome/)
-[![Scrutinizer Code Quality](https://img.shields.io/scrutinizer/g/hiqdev/rehome.svg)](https://scrutinizer-ci.com/g/hiqdev/rehome/)
 
 - keep your dotfiles in repository
 - define home config (shell and dependencies) in `.rehome.json`
@@ -55,4 +50,4 @@ Looks quite clear:
 This project is released under the terms of the BSD-3-Clause [license](LICENSE).
 Read more [here](http://choosealicense.com/licenses/bsd-3-clause).
 
-Copyright © 2016-2017, HiQDev (http://hiqdev.com/)
+Copyright © 2016-2017, HiQDev (<http://hiqdev.com/>)

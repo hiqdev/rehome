@@ -4,7 +4,6 @@ import os
 import sys
 import json
 import copy
-import getpass
 
 REPO_TMP_DIR = 'REPO_TMP'
 installed = {}
